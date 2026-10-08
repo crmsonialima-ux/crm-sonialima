@@ -1,0 +1,9 @@
+project_id = "oxmtlzvsqwqqdngtzlbm"
+
+[functions.whatsapp-inbound-lead]
+verify_jwt = false
+
+[functions.bio-lead-intake]
+verify_jwt = false
+[functions.whatsapp-birthday-dispatch]
+verify_jwt = false

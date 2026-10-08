@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "crm-sonialima",
+  "main": "./.output/server/index.mjs",
+  // Node.js compatibility is implicit for dates on or after 2026-08-04.
+  // Do not add a redundant nodejs_compat flag while Nitro issue #4527 is open.
+  "compatibility_date": "2026-08-24",
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./.output/public",
+    "binding": "ASSETS",
+    "run_worker_first": false,
+  },
+  "no_bundle": true,
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": ["**/*.mjs", "**/*.js"],
+    },
+  ],
+  "observability": {
+    "enabled": true,
+  },
+}

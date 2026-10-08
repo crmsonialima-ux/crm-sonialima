@@ -1,0 +1,2 @@
+-- Fix permission denied on crm_property_authorizations and related tables
+-- Grants moved to the final setup migration because these tables are created later.

@@ -1,0 +1,32 @@
+{
+  "id": "/",
+  "name": "Sônia Lima CRM",
+  "short_name": "Sônia Lima",
+  "description": "CRM executivo da Sônia Lima.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#171211",
+  "theme_color": "#171211",
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "1080x1080",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-transparent.png",
+      "sizes": "1080x1080",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
