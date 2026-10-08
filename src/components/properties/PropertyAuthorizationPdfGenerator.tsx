@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { fetchPropertyAuthorization, fetchPropertyAuthorizationPdfs, reservePdfVersion, finalizePdfVersion, type Property, type PropertyAuthorizationPdf } from "@/lib/properties";
 import { supabase } from "@/lib/supabase";
 
+// Official authorization forms must be supplied by this client before generation.
+const authorizationTemplateReady = false;
+
 export function PropertyAuthorizationPdfGenerator({
   property,
 }: {
@@ -378,19 +381,19 @@ export function PropertyAuthorizationPdfGenerator({
         <div>
           <h4 className="text-sm font-medium text-white mb-1">Autorização de Venda</h4>
           <p className="text-xs text-muted-foreground max-w-md">
-            Gere o documento oficial de autorização preenchido com os dados atuais do imóvel e dos proprietários.
+            A geração aguarda os modelos oficiais de autorização da Sônia Lima.
           </p>
         </div>
 
         <Button
           onClick={generatePdf}
-          disabled={loading}
+          disabled={loading || !authorizationTemplateReady}
           className="bg-copper hover:bg-copper/90 text-white whitespace-nowrap"
         >
           {loading ? (
             <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Gerando...</>
           ) : (
-            <><Plus className="w-4 h-4 mr-2" /> Gerar Nova Versão</>
+            <><Plus className="w-4 h-4 mr-2" /> {authorizationTemplateReady ? "Gerar Nova Versão" : "Aguardando modelo"}</>
           )}
         </Button>
       </div>
