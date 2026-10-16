@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff, Fingerprint, Loader2, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import logo from "@/assets/logo.png";
-import hero from "@/assets/hero.png";
+import loginBackground from "@/assets/login-background.png";
 import seal from "@/assets/seal.png";
 import {
   formatPasskeyError,
@@ -272,7 +272,11 @@ function LoginPage() {
       </div>
 
       <div className="relative hidden overflow-hidden lg:block">
-        <img src={hero} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <img
+          src={loginBackground}
+          alt="Vista aérea de Brasília ao entardecer"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
         <div
           className="absolute inset-0"
           style={{
