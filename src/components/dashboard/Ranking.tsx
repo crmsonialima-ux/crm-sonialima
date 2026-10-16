@@ -11,6 +11,8 @@ type SalesRankingRow = {
   faturamento: number | null;
 };
 
+const DEFAULT_BROKER_ROSTER = ["crmdanilo", "crmnoemia", "crmsonia", "crmallyson"];
+
 function firstDayOfMonth(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
@@ -75,12 +77,17 @@ export function Ranking({ data, showRevenue }: { data?: RankingRow[]; showRevenu
   const ranking = useMemo(() => {
     // Preserve the existing broker roster and tiers, but reset totals because
     // the selected month's values come exclusively from occurred_on.
-    const totals = new Map(
-      (data ?? []).map((item) => {
-        const nome = displayBrokerName(item.nome);
-        return [nome, { ...item, nome, vendas: 0, faturamento: 0 }];
-      }),
-    );
+    const totals = new Map<string, RankingRow>();
+    for (const item of data ?? []) {
+      const nome = displayBrokerName(item.nome);
+      totals.set(nome, { ...item, nome, vendas: 0, faturamento: 0 });
+    }
+    for (const nome of DEFAULT_BROKER_ROSTER) {
+      const displayName = displayBrokerName(nome);
+      if (!totals.has(displayName)) {
+        totals.set(displayName, { id: displayName, nome: displayName, vendas: 0, faturamento: 0 });
+      }
+    }
 
     for (const item of salesRanking) {
       const nome = displayBrokerName(item.broker_name);

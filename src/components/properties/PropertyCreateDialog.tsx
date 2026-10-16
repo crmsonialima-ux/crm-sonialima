@@ -1166,8 +1166,8 @@ export function PropertyCreateDialog({
                   <div className="sm:col-span-2 grid gap-3 rounded-lg border border-white/10 bg-white/[0.02] p-3 sm:grid-cols-2">
                     <p className="sm:col-span-2 text-xs text-muted-foreground">
                       {canEditPortalCodes
-                        ? "Referências dos anúncios nos portais. Somente Administrador pode alterar esses códigos."
-                        : "Referências dos anúncios nos portais. Os códigos só podem ser alterados por Administrador."}
+                        ? "Referências dos anúncios nos portais. Somente crmallyson pode alterar esses códigos."
+                        : "Referências dos anúncios nos portais. Os códigos só podem ser alterados por crmallyson."}
                     </p>
                     <Field label="Código do anúncio na W Imóveis">
                       <input

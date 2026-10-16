@@ -684,7 +684,7 @@ export function useLeadAccess(userId?: string) {
       if (!owner) throw new Error("Corretor responsável não encontrado.");
 
       if (!isAdministradorAdmin(profile.data)) {
-        throw new Error("Somente Administrador pode transferir um lead diretamente.");
+        throw new Error("Somente crmallyson pode transferir um lead diretamente.");
       }
       const { error } = await supabase.rpc("transfer_lead_directly", {
         p_lead_id: leadId,
@@ -700,7 +700,7 @@ export function useLeadAccess(userId?: string) {
     mutationFn: async (input: CompleteLeadRegistrationInput) => {
       if (!userId) throw new Error("Sessão não encontrada.");
       if (!isAdministradorAdmin(profile.data)) {
-        throw new Error("Somente o Administrador pode alterar os dados cadastrais do lead.");
+        throw new Error("Somente crmallyson pode alterar os dados cadastrais do lead.");
       }
       const lead = leads.data?.find((item) => item.id === input.leadId);
       if (!lead) throw new Error("Lead não encontrado. Atualize a lista e tente novamente.");
@@ -750,7 +750,7 @@ export function useLeadAccess(userId?: string) {
   const deleteLead = useMutation({
     mutationFn: async (leadId: string) => {
       if (profile.data?.role !== "admin") {
-        throw new Error("Apenas administradores podem excluir leads.");
+        throw new Error("Somente crmallyson pode excluir leads.");
       }
       const lead = leads.data?.find((item) => item.id === leadId);
       if (!lead) throw new Error("Lead não encontrado. Atualize a lista e tente novamente.");
@@ -1036,7 +1036,7 @@ export function useLeadAccess(userId?: string) {
   const restartExhaustedLead = useMutation({
     mutationFn: async (leadId: string) => {
       if (!isAdministradorAdmin(profile.data))
-        throw new Error("Somente Administrador pode reiniciar a fila.");
+        throw new Error("Somente crmallyson pode reiniciar a fila.");
       const { data, error } = await supabase.rpc("restart_exhausted_lead_queue", {
         p_lead_id: leadId,
       });

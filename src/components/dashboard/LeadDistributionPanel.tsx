@@ -4,13 +4,12 @@ import { Panel } from "@/components/dashboard/Panel";
 import { LEAD_TYPES, useForceUnblockBroker, useLeadDistribution, useSetBrokerQueueEnabled } from "@/lib/lead-distribution";
 import { displayBrokerName } from "@/lib/broker-names";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { isAdministradorAdmin, isRestrictedAdmin } from "@/lib/admin-access";
+import { isAdministradorAdmin } from "@/lib/admin-access";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 export function LeadDistributionPanel() {
   const { profile } = useAuth();
-  const showCount = isAdministradorAdmin(profile) || isRestrictedAdmin(profile);
   const canManageQueue = isAdministradorAdmin(profile);
   const { data = [], isLoading, error } = useLeadDistribution(
     true,
@@ -81,6 +80,7 @@ export function LeadDistributionPanel() {
                 !item.isBlocked,
             );
             const next = queue[0];
+            const upcoming = queue.slice(0, 3).map((item) => displayBrokerName(item.fullName));
 
             return (
               <div key={leadType} className="rounded-xl border border-white/8 bg-white/[0.02] p-4">
@@ -93,9 +93,14 @@ export function LeadDistributionPanel() {
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {next
-                    ? `Próximo da fila${showCount ? ` · ${queue.length} corretor(es) aptos` : ""}`
+                    ? `${queue.length} corretor(es) apto(s) na fila`
                     : "Cadastre um corretor para iniciar a fila."}
                 </p>
+                {next ? (
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Próximos: {upcoming.join(" → ")}
+                  </p>
+                ) : null}
               </div>
             );
           })}

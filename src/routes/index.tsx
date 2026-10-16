@@ -15,7 +15,6 @@ import { reportingDate, useDailyRevenueHistory } from "@/lib/daily-revenue";
 import { DashboardFilter, getInitialFilterState, saveFilterState, isSameMonthAndYear, type DashboardFilterState } from "@/components/dashboard/DashboardFilter";
 import { displayBrokerName } from "@/lib/broker-names";
 import { useLeadAccess } from "@/lib/lead-access";
-import { useSystemLeadOrigins } from "@/lib/lead-origin-report";
 import {
   Activity,
   ArrowUpRight,
@@ -75,12 +74,12 @@ function Dashboard() {
     role: profile?.role,
     email: profile?.email ?? session?.user.email,
   });
-  const isBroker = profile?.role === "broker";
   const allysonAdmin = isAdministradorAdmin({
     id: profile?.id ?? session?.user.id,
     role: profile?.role,
     email: session?.user.email,
   });
+  const canSeeAllPerformance = allysonAdmin;
   const [financialKpisHidden, setFinancialKpisHidden] = useState(true);
   const [timeGreeting, setTimeGreeting] = useState(getBrasiliaGreeting);
   const [filter, setFilterState] = useState<DashboardFilterState>(() => getInitialFilterState(session?.user.email));
@@ -101,13 +100,12 @@ function Dashboard() {
         : displayBrokerName(profile?.fullName) || "Corretor";
   const dailyRevenue = useDailyRevenueHistory(Boolean(profile));
   const leadAccess = useLeadAccess(session?.user.id);
-  const systemLeadOrigins = useSystemLeadOrigins(session?.user.id, filter, isBroker);
-  const visibleDailyRevenue = (isAdmin
+  const visibleDailyRevenue = (canSeeAllPerformance
     ? (dailyRevenue.data ?? [])
     : (dailyRevenue.data ?? []).filter((entry) => entry.broker_id === profile?.id))
     .filter((entry) => filter.allTime || isSameMonthAndYear(reportingDate(entry).toISOString(), filter));
     
-  const allTimeDailyRevenue = (isAdmin
+  const allTimeDailyRevenue = (canSeeAllPerformance
     ? (dailyRevenue.data ?? [])
     : (dailyRevenue.data ?? []).filter((entry) => entry.broker_id === profile?.id));
 
@@ -117,7 +115,11 @@ function Dashboard() {
     (total, entry) => (entry.kind === "venda" ? total + Number(entry.vgv ?? 0) : total),
     0,
   );
-  const crmLeadCounts = leadAccess.leads.reduce(
+  const visibleLeads = canSeeAllPerformance
+    ? leadAccess.leads
+    : leadAccess.leads.filter((lead) => lead.ownerId === session?.user.id);
+
+  const crmLeadCounts = visibleLeads.reduce(
     (counts, lead) => {
       const stage = lead.estagio.trim().toLocaleLowerCase("pt-BR");
       
@@ -136,13 +138,12 @@ function Dashboard() {
     { atendimentos: 0, standby: 0, visitas: 0, propostas: 0 },
   );
   
-  const generatedLeadsCount = leadAccess.leads.filter(
+  const generatedLeadsCount = visibleLeads.filter(
     (lead) => filter.allTime || isSameMonthAndYear(lead.criadoEm, filter)
   ).length;
 
-  const filteredLeadsForChannels = leadAccess.leads.filter(
-    (lead) => (isAdmin || lead.ownerId === session?.user.id) &&
-      (filter.allTime || isSameMonthAndYear(lead.criadoEm, filter))
+  const filteredLeadsForChannels = visibleLeads.filter(
+    (lead) => filter.allTime || isSameMonthAndYear(lead.criadoEm, filter),
   );
   const leadChannels = Object.entries(
     filteredLeadsForChannels.reduce<Record<string, number>>((channels, lead) => {
@@ -358,25 +359,10 @@ function Dashboard() {
         </section>
 
         <section className="mb-8">
-          <Panel title={isBroker ? "Origem dos meus leads" : "Origem de leads"} subtitle="Volume por canal">
+          <Panel title={canSeeAllPerformance ? "Origem de leads" : "Origem dos meus leads"} subtitle="Volume por canal">
             <ChannelBar data={leadChannels} emptyLabel={leadAccess.loading ? "Carregando leads…" : "Nenhum lead no período selecionado."} />
           </Panel>
         </section>
-
-        {isBroker && (
-          <section className="mb-8">
-            <Panel title="Origem de leads — geral" subtitle="Todos os leads do sistema · volume por canal">
-              {systemLeadOrigins.isError ? (
-                <p role="alert" className="py-10 text-center text-sm text-muted-foreground">
-                  Não foi possível carregar o relatório geral.
-                  <button type="button" className="ml-2 text-blue-400 underline" onClick={() => systemLeadOrigins.refetch()}>Tentar novamente</button>
-                </p>
-              ) : (
-                <ChannelBar data={systemLeadOrigins.data} color="blue" emptyLabel={systemLeadOrigins.isLoading ? "Carregando leads…" : "Nenhum lead no período selecionado."} />
-              )}
-            </Panel>
-          </section>
-        )}
 
         <footer className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-white/5 pt-6 text-[11px] text-muted-foreground">
           <div className="flex items-center gap-2">

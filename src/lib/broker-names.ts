@@ -1,5 +1,6 @@
 const brokerLabels: Record<string, string> = {
   allyson: "crmallyson",
+  administrador: "crmallyson",
   crmallyson: "crmallyson",
   "crmsoniaallyson@gmail.com": "crmallyson",
   crmdaniel: "Daniel",
