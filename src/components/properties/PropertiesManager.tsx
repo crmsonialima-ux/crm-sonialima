@@ -16,7 +16,7 @@ import { PropertyCreateDialog } from "@/components/properties/PropertyCreateDial
 import { PropertyBrokerAssignmentDialog } from "@/components/properties/PropertyBrokerAssignmentDialog";
 import { PropertyCapturerSelect } from "@/components/properties/PropertyCapturerSelect";
 import { PropertyValueReviewDialog } from "@/components/properties/PropertyValueReviewDialog";
-import { useBrokerProfiles } from "@/lib/lead-access";
+import { useBrokerProfiles, type AccessProfile } from "@/lib/lead-access";
 import { supabase } from "@/lib/supabase";
 import { displayBrokerName } from "@/lib/broker-names";
 import { canEditPropertyPortalCodes, isAdministradorAdmin, isRestrictedAdmin } from "@/lib/admin-access";
@@ -82,7 +82,25 @@ export function PropertiesManager({
   const canDeleteProperties = allysonAdmin;
   const canManageBrokerAssignments = allysonAdmin;
   const brokerProfiles = useBrokerProfiles(Boolean(profile));
-  const brokerNames = brokerProfiles.data?.map((broker) => broker.fullName) ?? [];
+  // crmallyson também participa da operação comercial. Por isso deve estar
+  // disponível ao definir tanto o corretor responsável quanto o captador.
+  const propertyParticipants = useMemo<AccessProfile[]>(() => {
+    const participants = new Map(
+      (brokerProfiles.data ?? []).map((broker) => [broker.id, broker]),
+    );
+    if (allysonAdmin && profile) {
+      participants.set(profile.id, {
+        id: profile.id,
+        fullName: "crmallyson",
+        email: profile.email,
+        role: "broker",
+      });
+    }
+    return [...participants.values()].sort((left, right) =>
+      displayBrokerName(left.fullName).localeCompare(displayBrokerName(right.fullName), "pt-BR"),
+    );
+  }, [allysonAdmin, brokerProfiles.data, profile]);
+  const brokerNames = propertyParticipants.map((broker) => broker.fullName);
   const [propertyCapturers, setPropertyCapturers] = useState<Record<string, string[]>>({});
   const [documentNotifications, setDocumentNotifications] = useState<Record<string, boolean>>({});
   const [publicLinks, setPublicLinks] = useState<Record<string, string>>({});
@@ -391,7 +409,7 @@ export function PropertiesManager({
             isAdmin={allysonAdmin}
             brokerName={profile?.fullName}
             brokers={brokerNames}
-            capturerProfiles={brokerProfiles.data ?? []}
+            capturerProfiles={propertyParticipants}
             existingProperties={allProperties}
             draftOwner={session?.user.id}
             onCreated={refreshProperties}
@@ -552,7 +570,7 @@ export function PropertiesManager({
                       <PropertyCapturerSelect
                         propertyId={property.id}
                         value={propertyCapturers[property.id]}
-                        brokers={brokerProfiles.data ?? []}
+                        brokers={propertyParticipants}
                         onChanged={(brokerIds) =>
                           setPropertyCapturers((current) => ({
                             ...current,
@@ -579,7 +597,7 @@ export function PropertiesManager({
                     isAdmin={allysonAdmin}
                     brokerName={profile?.fullName}
                     brokers={brokerNames}
-                    capturerProfiles={brokerProfiles.data ?? []}
+                    capturerProfiles={propertyParticipants}
                     capturerIds={propertyCapturers[property.id] ?? []}
                     property={property}
                     existingProperties={allProperties}
@@ -731,7 +749,7 @@ export function PropertiesManager({
                         <PropertyCapturerSelect
                           propertyId={property.id}
                           value={propertyCapturers[property.id]}
-                          brokers={brokerProfiles.data ?? []}
+                        brokers={propertyParticipants}
                           onChanged={(brokerIds) =>
                             setPropertyCapturers((current) => ({
                               ...current,
@@ -771,7 +789,7 @@ export function PropertiesManager({
                           isAdmin={allysonAdmin}
                           brokerName={profile?.fullName}
                           brokers={brokerNames}
-                          capturerProfiles={brokerProfiles.data ?? []}
+                          capturerProfiles={propertyParticipants}
                           capturerIds={propertyCapturers[property.id] ?? []}
                           property={property}
                           existingProperties={allProperties}
