@@ -162,7 +162,7 @@ export function PropertyCreateDialog({
     .join(":");
 
   const [open, setOpen] = useState(false);
-  const [activeTab] = useState<"admin">("admin");
+  const [activeTab, setActiveTab] = useState<"admin" | "auth">("admin");
   const [loadingAuth, setLoadingAuth] = useState(false);
 
   const [form, setForm] = useState<FormState>(() =>
@@ -267,7 +267,9 @@ export function PropertyCreateDialog({
       setCaptureRankingEnabled(Boolean(property?.captureRankingEnabled));
       setError("");
       setRestoredFromDraft(false);
-      setActiveTab("auth");
+      // A ficha de captação foi removida: mantenha o formulário administrativo
+      // visível ao abrir ou editar um imóvel.
+      setActiveTab("admin");
     }
   }, [open, isAdmin, brokerName, property, draftRestored, firstCapturerId, secondCapturerId]);
 
