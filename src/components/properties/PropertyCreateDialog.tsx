@@ -30,7 +30,6 @@ import {
   initialAuthForm,
   type AuthFormState,
 } from "./PropertyAuthorizationForm";
-import { PropertyAuthorizationPdfGenerator } from "./PropertyAuthorizationPdfGenerator";
 
 const propertyTypes = [
   "Apartamento",
@@ -163,7 +162,7 @@ export function PropertyCreateDialog({
     .join(":");
 
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"auth" | "admin">("auth");
+  const [activeTab] = useState<"admin">("admin");
   const [loadingAuth, setLoadingAuth] = useState(false);
 
   const [form, setForm] = useState<FormState>(() =>
@@ -492,7 +491,7 @@ export function PropertyCreateDialog({
         broker:
           (canManageBrokerAssignments ? selectedBrokers.join(", ") : form.broker).trim() ||
           undefined,
-        owner: form.owner.trim() || authForm.prop1Nome.trim() || undefined,
+        owner: form.owner.trim() || undefined,
         status: form.status,
         hasPhotos: form.hasPhotos,
       };
@@ -588,9 +587,8 @@ export function PropertyCreateDialog({
       const isNewSubmission = !propertyId;
 
       if (isNewSubmission) {
-        // Fluxo Atômico para a Submissão Inicial (Fase 1) do Corretor
         propertyId = (await findMatchingPropertyId(input)) ?? createPropertyExternalId();
-        await submitPropertyAuthorizationPhase1(propertyId, input, authInput, selectedCapturers[0]);
+        await saveProperty(input, propertyId);
         setCreatedPropertyId(propertyId);
       }
 
@@ -731,27 +729,6 @@ export function PropertyCreateDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {isAdmin && (
-          <div className="flex border-b border-white/10 mb-4">
-            <button
-              className={`px-4 py-2 text-sm font-medium border-b-2 transition ${activeTab === "auth" ? "border-copper text-copper" : "border-transparent text-muted-foreground hover:text-foreground"}`}
-              onClick={() => setActiveTab("auth")}
-            >
-              Ficha de Captação
-            </button>
-            <button
-              className={`px-4 py-2 text-sm font-medium border-b-2 transition ${activeTab === "admin" ? "border-copper text-copper" : "border-transparent text-muted-foreground hover:text-foreground"}`}
-              onClick={() => setActiveTab("admin")}
-            >
-              Dados Administrativos{" "}
-              {isPending && (
-                <span className="ml-1 text-[10px] bg-copper/20 text-copper px-1.5 py-0.5 rounded">
-                  Pendente
-                </span>
-              )}
-            </button>
-          </div>
-        )}
 
         {loadingAuth ? (
           <div className="flex justify-center p-8">
@@ -773,7 +750,7 @@ export function PropertyCreateDialog({
                 disabled={readOnly}
               />
             </Field>
-            <div className={activeTab === "auth" ? "block" : "hidden"}>
+            {false && <div>
               <PropertyAuthorizationForm
                 form={authForm}
                 onChange={updateAuth}
@@ -911,7 +888,7 @@ export function PropertyCreateDialog({
                   </Field>
                 </div>
               )}
-            </div>
+            </div>}
 
             <div className={activeTab === "admin" ? "block" : "hidden"}>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -996,24 +973,6 @@ export function PropertyCreateDialog({
                     disabled={readOnly}
                   />
                 </Field>
-                {canSetReviewability && (
-                  <div className="sm:col-span-2">
-                    <p className="mb-1.5 text-xs text-muted-foreground">Classificação do imóvel</p>
-                    <button
-                      type="button"
-                      aria-pressed={form.reviewable}
-                      onClick={() => !readOnly && updateForm("reviewable", !form.reviewable)}
-                      disabled={readOnly}
-                      className={`w-full rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
-                        form.reviewable
-                          ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-300"
-                          : "border-white/10 bg-white/[0.03] text-muted-foreground"
-                      } disabled:opacity-70 disabled:cursor-not-allowed`}
-                    >
-                      {form.reviewable ? "Revisável" : "Não revisável"}
-                    </button>
-                  </div>
-                )}
                 {isSoniaLimaAccount && (
                   <div className="sm:col-span-2">
                     <p className="mb-1.5 text-xs text-copper">
@@ -1261,11 +1220,6 @@ export function PropertyCreateDialog({
               </p>
             )}
 
-            {editing && (
-              <div className="mt-4 pt-4 border-t border-white/10">
-                <PropertyAuthorizationPdfGenerator property={property as Property} />
-              </div>
-            )}
 
             <div className="flex justify-between mt-4 border-t border-white/10 pt-4">
               <div>

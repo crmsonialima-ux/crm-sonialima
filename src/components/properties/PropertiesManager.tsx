@@ -15,20 +15,16 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { PropertyCreateDialog } from "@/components/properties/PropertyCreateDialog";
 import { PropertyBrokerAssignmentDialog } from "@/components/properties/PropertyBrokerAssignmentDialog";
 import { PropertyCapturerSelect } from "@/components/properties/PropertyCapturerSelect";
-import { PropertyDocumentsDialog } from "@/components/properties/PropertyDocumentsDialog";
-import { PropertyDocumentNotificationToggle } from "@/components/properties/PropertyDocumentNotificationToggle";
-import { PropertyAuthorizationPdfGenerator } from "@/components/properties/PropertyAuthorizationPdfGenerator";
 import { PropertyValueReviewDialog } from "@/components/properties/PropertyValueReviewDialog";
 import { useBrokerProfiles } from "@/lib/lead-access";
 import { supabase } from "@/lib/supabase";
 import { displayBrokerName } from "@/lib/broker-names";
 import { canEditPropertyPortalCodes, isAdministradorAdmin, isRestrictedAdmin } from "@/lib/admin-access";
 
-type PropertyTab = "Todos" | "Ativos" | "Vendidos" | "Alugados" | "Revisáveis";
+type PropertyTab = "Todos" | "Ativos" | "Vendidos" | "Alugados";
 
 function matchesTab(property: Property, tab: PropertyTab) {
   if (tab === "Todos") return true;
-  if (tab === "Revisáveis") return Boolean(property.reviewable);
   const status = property.status?.trim().toLocaleLowerCase("pt-BR");
   if (tab === "Ativos") return status === "ativo";
   if (tab === "Vendidos") return status === "vendido";
@@ -213,9 +209,9 @@ export function PropertiesManager({
       if (typeof saved.query === "string") setQuery(saved.query);
       if (
         saved.tab &&
-        ["Todos", "Ativos", "Vendidos", "Alugados", "Revisáveis"].includes(saved.tab)
+        ["Todos", "Ativos", "Vendidos", "Alugados"].includes(saved.tab)
       ) {
-        setTab(saved.tab === "Revisáveis" && !restrictedAdmin ? "Ativos" : saved.tab);
+        setTab(saved.tab);
       }
       if (Number.isInteger(saved.page) && Number(saved.page) > 0) setPage(Number(saved.page));
       requestAnimationFrame(() => {
@@ -438,7 +434,6 @@ export function PropertiesManager({
                 "Ativos",
                 "Vendidos",
                 "Alugados",
-                ...(restrictedAdmin ? ["Revisáveis"] : []),
               ] as PropertyTab[]
             ).map((item) => (
               <button
@@ -450,11 +445,7 @@ export function PropertiesManager({
                   setPage(1);
                 }}
                 className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                  item === "Revisáveis"
-                    ? tab === item
-                      ? "bg-amber-400 text-black shadow-sm"
-                      : "bg-amber-400/10 text-amber-300 hover:bg-amber-400/20"
-                    : tab === item
+                  tab === item
                       ? "bg-copper text-white shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
                 }`}
@@ -577,29 +568,6 @@ export function PropertiesManager({
                 </dl>
 
                 <div className="mt-4 flex flex-wrap gap-2 border-t border-white/5 pt-3">
-                  {restrictedAdmin && property.reviewable && (
-                    <Button
-                      size="sm"
-                      className="bg-amber-400 text-black hover:bg-amber-300"
-                      onClick={() => openPropertyReview(property)}
-                    >
-                      Revisar valor
-                    </Button>
-                  )}
-                  {allysonAdmin && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className={
-                        property.reviewable
-                          ? "border-emerald-400/40 text-emerald-300"
-                          : "text-muted-foreground"
-                      }
-                      onClick={() => void updateReviewability(property)}
-                    >
-                      {property.reviewable ? "Revisável" : "Não revisável"}
-                    </Button>
-                  )}
                   {property.publicUrl && (
                     <Button asChild size="sm" variant="outline">
                       <a href={property.publicUrl} target="_blank" rel="noopener noreferrer">
@@ -643,21 +611,6 @@ export function PropertiesManager({
                     >
                       <Trash2 size={14} /> Excluir
                     </Button>
-                  )}
-                  {propertyRequiresDocuments(property) && (
-                    <PropertyDocumentsDialog property={property} />
-                  )}
-                  {allysonAdmin && propertyRequiresDocuments(property) && (
-                    <PropertyDocumentNotificationToggle
-                      propertyId={property.id}
-                      enabled={documentNotifications[property.id] ?? true}
-                      onChanged={(enabled) =>
-                        setDocumentNotifications((current) => ({
-                          ...current,
-                          [property.id]: enabled,
-                        }))
-                      }
-                    />
                   )}
                 </div>
               </article>
@@ -807,47 +760,12 @@ export function PropertiesManager({
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        {restrictedAdmin && property.reviewable && (
-                          <Button
-                            size="sm"
-                            className="bg-amber-400 text-black hover:bg-amber-300"
-                            onClick={() => openPropertyReview(property)}
-                          >
-                            Revisar valor
-                          </Button>
-                        )}
-                        {allysonAdmin && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className={
-                              property.reviewable ? "text-emerald-300" : "text-muted-foreground"
-                            }
-                            onClick={() => void updateReviewability(property)}
-                          >
-                            {property.reviewable ? "Revisável" : "Não revisável"}
-                          </Button>
-                        )}
                         {property.publicUrl && (
                           <Button asChild size="sm" variant="ghost">
                             <a href={property.publicUrl} target="_blank" rel="noopener noreferrer">
                               <ExternalLink size={14} /> Ver imóvel
                             </a>
                           </Button>
-                        )}
-                        {allysonAdmin && propertyRequiresDocuments(property) && (
-                          <div className="w-[120px] shrink-0" onClick={(e) => e.stopPropagation()}>
-                            <PropertyDocumentNotificationToggle
-                              propertyId={property.id}
-                              enabled={documentNotifications[property.id] ?? true}
-                              onChanged={(enabled) =>
-                                setDocumentNotifications((current) => ({
-                                  ...current,
-                                  [property.id]: enabled,
-                                }))
-                              }
-                            />
-                          </div>
                         )}
                         <PropertyCreateDialog
                           isAdmin={allysonAdmin}
@@ -887,10 +805,6 @@ export function PropertiesManager({
                             <Trash2 size={14} /> Excluir
                           </Button>
                         )}
-                        {propertyRequiresDocuments(property) && (
-                          <PropertyDocumentsDialog property={property} />
-                        )}
-                        <PropertyAuthorizationPdfGenerator property={property} />
                       </div>
                     </td>
                   </tr>
