@@ -211,7 +211,7 @@ export async function saveProperty(input: PropertyInput, id?: string): Promise<P
     ? supabase.from("crm_property_catalog").update(values).eq("external_id", id)
     : supabase
         .from("crm_property_catalog")
-        .insert({ external_id: externalId, registration_phase: "PENDING", ...values });
+        .insert({ external_id: externalId, registration_phase: "COMPLETED", ...values });
   const { data, error } = await request.select("*").single();
   if (error) {
     if (error.code === "23505") throw new CrudApiError("Este código de anúncio já está em uso.");

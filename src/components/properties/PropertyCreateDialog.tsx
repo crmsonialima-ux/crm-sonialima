@@ -618,7 +618,6 @@ export function PropertyCreateDialog({
           }
         }
         // Finalizar sessão obrigatoriamente (mesmo com 0 arquivos)
-        await supabase.rpc("finalize_initial_documents", { p_property_id: propertyId });
       } else {
         // Fluxo para Atualizações e Edição Administrativa (Fase 2+ e imóveis antigos)
         await saveProperty(input, propertyId!);
