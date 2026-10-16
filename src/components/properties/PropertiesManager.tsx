@@ -588,23 +588,25 @@ export function PropertiesManager({
                       </a>
                     </Button>
                   )}
-                  <PropertyCreateDialog
-                    isAdmin={allysonAdmin}
-                    brokerName={profile?.fullName}
-                    brokers={brokerNames}
-                    capturerProfiles={propertyParticipants}
-                    capturerIds={propertyCapturers[property.id] ?? []}
-                    property={property}
-                    existingProperties={allProperties}
-                    draftOwner={session?.user.id}
-                    draftScope="mobile"
-                    onCreated={refreshProperties}
-                    canEditExisting={canEditPropertyCaptureSheet(property)}
-                    canSetReviewability={allysonAdmin}
-                    canEditPortalCodes={canEditPortalCodes}
-                    canManageBrokerAssignments={canManageBrokerAssignments}
-                    isSoniaLimaAccount={allysonAdmin}
-                  />
+                  {allysonAdmin && (
+                    <PropertyCreateDialog
+                      isAdmin={allysonAdmin}
+                      brokerName={profile?.fullName}
+                      brokers={brokerNames}
+                      capturerProfiles={propertyParticipants}
+                      capturerIds={propertyCapturers[property.id] ?? []}
+                      property={property}
+                      existingProperties={allProperties}
+                      draftOwner={session?.user.id}
+                      draftScope="mobile"
+                      onCreated={refreshProperties}
+                      canEditExisting
+                      canSetReviewability
+                      canEditPortalCodes={canEditPortalCodes}
+                      canManageBrokerAssignments
+                      isSoniaLimaAccount
+                    />
+                  )}
                   {allysonAdmin && (
                     <PropertyBrokerAssignmentDialog
                       property={property}
@@ -775,23 +777,25 @@ export function PropertiesManager({
                             </a>
                           </Button>
                         )}
-                        <PropertyCreateDialog
-                          isAdmin={allysonAdmin}
-                          brokerName={profile?.fullName}
-                          brokers={brokerNames}
-                          capturerProfiles={propertyParticipants}
-                          capturerIds={propertyCapturers[property.id] ?? []}
-                          property={property}
-                          existingProperties={allProperties}
-                          draftOwner={session?.user.id}
-                          draftScope="desktop"
-                          isSoniaLimaAccount={allysonAdmin}
-                          onCreated={refreshProperties}
-                          canEditExisting={canEditPropertyCaptureSheet(property)}
-                          canSetReviewability={allysonAdmin}
-                          canEditPortalCodes={canEditPortalCodes}
-                          canManageBrokerAssignments={canManageBrokerAssignments}
-                        />
+                        {allysonAdmin && (
+                          <PropertyCreateDialog
+                            isAdmin={allysonAdmin}
+                            brokerName={profile?.fullName}
+                            brokers={brokerNames}
+                            capturerProfiles={propertyParticipants}
+                            capturerIds={propertyCapturers[property.id] ?? []}
+                            property={property}
+                            existingProperties={allProperties}
+                            draftOwner={session?.user.id}
+                            draftScope="desktop"
+                            isSoniaLimaAccount
+                            onCreated={refreshProperties}
+                            canEditExisting
+                            canSetReviewability
+                            canEditPortalCodes={canEditPortalCodes}
+                            canManageBrokerAssignments
+                          />
+                        )}
                         {allysonAdmin && (
                           <PropertyBrokerAssignmentDialog
                             property={property}
