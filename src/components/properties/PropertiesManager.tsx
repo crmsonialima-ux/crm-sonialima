@@ -515,11 +515,6 @@ export function PropertiesManager({
                     <span className="rounded-full bg-copper/10 px-2 py-1 text-[10px] text-copper">
                       {property.status ?? "—"}
                     </span>
-                    {property.registrationPhase === "PENDING" && (
-                      <span className="rounded-full border border-red-400/30 bg-red-500/10 px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-red-300">
-                        Pendente de cadastro
-                      </span>
-                    )}
                   </div>
                 </div>
 
@@ -769,11 +764,6 @@ export function PropertiesManager({
                         <span className="rounded-full bg-copper/10 px-2 py-1 text-[10px] text-copper">
                           {property.status ?? "—"}
                         </span>
-                        {property.registrationPhase === "PENDING" && (
-                          <span className="rounded-full border border-red-400/30 bg-red-500/10 px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-red-300 whitespace-nowrap">
-                            Pendente de cadastro
-                          </span>
-                        )}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-right">
