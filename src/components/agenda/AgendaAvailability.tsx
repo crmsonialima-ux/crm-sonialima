@@ -1085,7 +1085,7 @@ export function AgendaAvailability({
         {correcting && (
           <p className="rounded-lg bg-amber-400/10 p-3 text-sm text-amber-200">
             Correção: esta será a segunda e última versão. A anterior continuará guardada para o
-            Allyson.
+            crmallyson.
           </p>
         )}
         <div className="grid gap-2 sm:grid-cols-2">
@@ -1307,7 +1307,7 @@ export function AgendaAvailability({
             <p className="mt-1 text-xs text-muted-foreground">
               {paths.length
                 ? `Salvo em ${dateTimeLabel(entry.cartorio_vitor_document_uploaded_at)}`
-                : "O Vitor será lembrado a cada 1 hora. Após 24 horas sem anexo, Allyson será avisado."}
+                : "O Vitor será lembrado a cada 1 hora. Após 24 horas sem anexo, crmallyson será avisado."}
             </p>
           </div>
         </div>

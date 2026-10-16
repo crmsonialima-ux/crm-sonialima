@@ -156,7 +156,7 @@ export function LeadDistributionPanel() {
                 Participação na fila
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Controle exclusivo do Allyson. Desativar impede o corretor de receber novos leads.
+                Controle exclusivo do crmallyson. Desativar impede o corretor de receber novos leads.
               </p>
             </div>
           </div>
@@ -211,8 +211,8 @@ function blockPresentation(
   if (item.manuallyDisabled || reason.includes("desativado manualmente")) {
     if (!canSeeManualReason) return { status: "Indisponível para receber leads" };
     return {
-      status: "Aguardando reativação pelo Allyson",
-      detail: "Desativado manualmente pelo Allyson",
+      status: "Aguardando reativação pelo crmallyson",
+      detail: "Desativado manualmente pelo crmallyson",
     };
   }
   if (reason.includes("indisponivel") || reason.includes("indisponível")) {

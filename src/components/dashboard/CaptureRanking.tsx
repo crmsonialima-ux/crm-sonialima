@@ -66,14 +66,14 @@ function scoreFor(soldFromDaily: boolean, classificationValue?: string | null) {
 
   // Para imóveis que ainda não possuem venda lançada, a classificação de
   // Allyson determina 7, 5, 3 ou permanece pendente em zero.
-  if (!exclusivity) return { points: 0, category: "Aguardando resposta de Allyson" };
+  if (!exclusivity) return { points: 0, category: "Aguardando resposta de crmallyson" };
   if (exclusivity.includes("com exclusividade"))
     return { points: 7, category: "Com exclusividade" };
   if (exclusivity.includes("sem exclusividade"))
     return { points: 5, category: "Sem exclusividade" };
   if (exclusivity.includes("sem autorizacao"))
     return { points: 3, category: "Sem autorização de venda" };
-  return { points: 0, category: "Aguardando resposta de Allyson" };
+  return { points: 0, category: "Aguardando resposta de crmallyson" };
 }
 
 function formatDate(value?: string) {

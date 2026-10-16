@@ -320,10 +320,9 @@ function formatHistoryValue(field: string, value: unknown) {
 
 function displayAdministratorLabel(value?: string | null) {
   return value
-    ?.replace(/crmallyson/gi, "crmadministrador")
-    .replace(/crmadministrador/gi, "crmadministrador")
-    .replace(/allyson@sonialima\.com\.br/gi, "administrador@sonialima.com.br")
-    .replace(/allyson/gi, "Administrador") ?? "";
+    ?.replace(/crmadministrador/gi, "crmallyson")
+    .replace(/allyson@sonialima\.com\.br/gi, "crmallyson")
+    .replace(/allyson/gi, "crmallyson") ?? "";
 }
 
 function displayAdministratorEmail(value?: string | null) {

@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "@tanstack/react-router";
 import { Fingerprint, Loader2, LockKeyhole } from "lucide-react";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { supabase } from "@/lib/supabase";
-import { canViewExecutiveDashboard, isAdministradorAdmin } from "@/lib/admin-access";
+import { isAdministradorAdmin } from "@/lib/admin-access";
 import type { Theme } from "@/hooks/use-theme";
 import {
   installCrmClientErrorCapture,
@@ -184,7 +184,7 @@ function RoleGate({
   loading: boolean;
 }) {
   const location = useLocation();
-  const brokerRoutes = ["/leads", "/imoveis", "/agenda"];
+  const brokerRoutes = ["/", "/leads", "/imoveis", "/agenda"];
   if (loading) return <div className="min-h-dvh bg-background" />;
   if (location.pathname === "/validacao" && !profile?.isValidator)
     return <Navigate to="/" replace />;
@@ -192,7 +192,6 @@ function RoleGate({
     return <Navigate to="/leads" replace />;
   if (
     !isAdministradorAdmin(profile) &&
-    !(canViewExecutiveDashboard(profile) && location.pathname === "/") &&
     !brokerRoutes.includes(location.pathname)
   )
     return <Navigate to="/leads" replace />;

@@ -383,7 +383,7 @@ function Dashboard() {
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 anim-pulse-glow" />
             Todos os sistemas operacionais · v1.0.0
           </div>
-          <div>© {new Date().getFullYear()} Sônia Lima · Desenvolvido por Allyson</div>
+          <div>© {new Date().getFullYear()} Sônia Lima · Desenvolvido por crmallyson</div>
         </footer>
       </main>
     </div>
