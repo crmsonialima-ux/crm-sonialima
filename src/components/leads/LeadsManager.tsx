@@ -31,8 +31,6 @@ import {
 } from "@/components/ui/dialog";
 import { LeadCreateDialog } from "@/components/leads/LeadCreateDialog";
 import { LeadProposalDocuments } from "@/components/leads/LeadProposalDocuments";
-import { LeadFinancingAction } from "@/components/leads/LeadFinancingAction";
-import { PostAcceptanceQualification } from "@/components/leads/PostAcceptanceQualification";
 import {
   LEAD_PROGRESS_STAGES,
   type AccessProfile,
@@ -52,6 +50,7 @@ import { supabase } from "@/lib/supabase";
 import { displayText } from "@/lib/display-text";
 
 const NO_PROPERTY_INTEREST = "NÃO TEM IMÓVEL DE INTERESSE AINDA";
+const SIMPLIFIED_LEAD_FLOW = true;
 const leadOrigins = [
   "DF Imóveis",
   "W Imóveis",
@@ -666,7 +665,7 @@ export function LeadsManager({
                   <AdministrativeNotice activity={administrativeNotices.get(lead.id)!} />
                 ) : null}
 
-                <div className="mt-2">
+                {!SIMPLIFIED_LEAD_FLOW && <div className="mt-2">
                   <LeadDeadlineTimer
                     availableAt={lead.assignmentAvailableAt}
                     deadline={lead.assignmentDeadlineAt}
@@ -677,7 +676,7 @@ export function LeadsManager({
                     qualificationCompleted={Boolean(lead.postAcceptanceQualificationCompletedAt)}
                     qualificationExpired={Boolean(lead.postAcceptanceQualificationExpiredAt)}
                   />
-                </div>
+                </div>}
                 <PropertyMatchOffers
                   lead={lead}
                   onStart={onStartSimilarPropertyOffer}
@@ -865,7 +864,7 @@ export function LeadsManager({
                         >
                           {stageLabel(lead.estagio)}
                         </span>
-                        <LeadDeadlineTimer
+                        {!SIMPLIFIED_LEAD_FLOW && <LeadDeadlineTimer
                           availableAt={lead.assignmentAvailableAt}
                           deadline={lead.assignmentDeadlineAt}
                           assignmentStatus={lead.assignmentStatus}
@@ -876,7 +875,7 @@ export function LeadsManager({
                             lead.postAcceptanceQualificationCompletedAt,
                           )}
                           qualificationExpired={Boolean(lead.postAcceptanceQualificationExpiredAt)}
-                        />
+                        />}
                         <PropertyMatchOffers
                           lead={lead}
                           onStart={onStartSimilarPropertyOffer}
@@ -1354,11 +1353,12 @@ function LeadViewDialog({
   const updateProgress = async () => {
     if (!lead || !onUpdateProgress) return;
     setProgressError("");
-    if (progressStage === "Visita agendada" && !visitScheduledAt) {
+    if (!SIMPLIFIED_LEAD_FLOW && progressStage === "Visita agendada" && !visitScheduledAt) {
       setProgressError("Informe uma data e um horário válidos para a visita.");
       return;
     }
     if (
+      !SIMPLIFIED_LEAD_FLOW &&
       progressStage === "Visita agendada" &&
       lead.tipoLead === "Aluguel" &&
       visitExecutorIds.length === 0
@@ -1367,6 +1367,7 @@ function LeadViewDialog({
       return;
     }
     if (
+      !SIMPLIFIED_LEAD_FLOW &&
       !visitHasStarted &&
       (progressStage === "Visita realizada" || progressStage === "Proposta")
     ) {
@@ -1386,11 +1387,12 @@ function LeadViewDialog({
     const shouldSaveVisitAnswer =
       Boolean(visitPropertyCaptured) &&
       (progressStage === "Visita realizada" || lead.estagio === "Visita realizada");
-    if (qualificationPending && changingStage) {
+    if (!SIMPLIFIED_LEAD_FLOW && qualificationPending && changingStage) {
       setProgressError("Conclua a qualificação obrigatória antes de alterar a etapa do lead.");
       return;
     }
     if (
+      !SIMPLIFIED_LEAD_FLOW &&
       lead.commercialQualificationRequired &&
       changingStage &&
       (!hasPropertyToSell || !needsFinancing || !willUseFgts || !bankingPresented)
@@ -1399,6 +1401,7 @@ function LeadViewDialog({
       return;
     }
     if (
+      !SIMPLIFIED_LEAD_FLOW &&
       lead.commercialQualificationRequired &&
       changingStage &&
       hasPropertyToSell === "sim" &&
@@ -1407,7 +1410,7 @@ function LeadViewDialog({
       setProgressError("Informe a localização e o valor do imóvel que o lead pretende vender.");
       return;
     }
-    if (requiresVisitAnswer && !visitPropertyCaptured) {
+    if (!SIMPLIFIED_LEAD_FLOW && requiresVisitAnswer && !visitPropertyCaptured) {
       setProgressError("Informe se o imóvel do cliente foi captado durante a visita.");
       return;
     }
@@ -1617,8 +1620,7 @@ function LeadViewDialog({
         {lead?.estagio === "Proposta" && onUpdateProgress && (
           <LeadProposalDocuments leadId={lead.id} leadName={lead.nome} />
         )}
-        {lead ? <LeadFinancingAction lead={lead} /> : null}
-        {lead ? <PostAcceptanceQualification lead={lead} currentUserId={currentUserId} /> : null}
+        {/* Fluxo simplificado: sem financiamento ou qualificação obrigatória. */}
         {lead?.assignmentStatus === "exhausted" && onRestartExhaustedLead ? (
           <section className="mt-5 rounded-xl border border-amber-400/30 bg-amber-400/10 p-4">
             <h3 className="text-sm font-semibold text-amber-100">Esteira esgotada</h3>
@@ -1674,7 +1676,7 @@ function LeadViewDialog({
             ) : null}
           </div>
         )}
-        {lead?.estagio === "Em atendimento" &&
+        {!SIMPLIFIED_LEAD_FLOW && lead?.estagio === "Em atendimento" &&
           lead.ownerEmail?.trim().toLocaleLowerCase("pt-BR") !== "unassigned-institutional@example.invalid" &&
           onExtendAttendance && (
             <section className="mt-5 border-t border-white/10 pt-4">
@@ -1759,7 +1761,7 @@ function LeadViewDialog({
             <p className="mt-1 text-xs text-muted-foreground">
               Registre a etapa atual desta oportunidade.
             </p>
-            {(lead?.visitaAgendadaEm || lead?.estagio === "Visita agendada") && (
+            {!SIMPLIFIED_LEAD_FLOW && (lead?.visitaAgendadaEm || lead?.estagio === "Visita agendada") && (
               <Button
                 type="button"
                 variant="outline"
@@ -1771,7 +1773,7 @@ function LeadViewDialog({
                 Remarcar visita
               </Button>
             )}
-            {lead?.estagio === "Visita agendada" &&
+            {!SIMPLIFIED_LEAD_FLOW && lead?.estagio === "Visita agendada" &&
               lead.visitaAgendadaEm &&
               new Date(lead.visitaAgendadaEm).getTime() <= dialogNow && (
                 <section className="mt-4 rounded-xl border border-amber-300/20 bg-amber-300/[0.04] p-3">
@@ -1811,11 +1813,7 @@ function LeadViewDialog({
                 <select
                   value={progressStage}
                   onChange={(event) => setProgressStage(event.target.value as LeadProgressStage)}
-                  disabled={
-                    Boolean(lead.postAcceptanceQualificationDeadlineAt) &&
-                    !lead.postAcceptanceQualificationCompletedAt &&
-                    !lead.postAcceptanceQualificationExpiredAt
-                  }
+                  disabled={false}
                   className="mt-1.5 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-foreground outline-none focus:border-copper/50"
                 >
                   {selectableProgressStages.map((stage) => (
@@ -1932,7 +1930,7 @@ function LeadViewDialog({
                 </div>
               )}
             </div>
-            {lead.estagio === "Em atendimento" ? (
+            {!SIMPLIFIED_LEAD_FLOW && lead.estagio === "Em atendimento" ? (
               <section className="mt-4 rounded-xl border border-amber-300/20 bg-amber-300/[0.04] p-4">
                 <h4 className="text-sm font-semibold text-amber-100">
                   Qualificação comercial obrigatória
@@ -1987,7 +1985,7 @@ function LeadViewDialog({
                 </div>
               </section>
             ) : null}
-            {progressStage === "Visita realizada" || lead.estagio === "Visita realizada" ? (
+            {!SIMPLIFIED_LEAD_FLOW && (progressStage === "Visita realizada" || lead.estagio === "Visita realizada") ? (
               <section className="mt-4 rounded-xl border border-violet-300/20 bg-violet-300/[0.04] p-4">
                 <h4 className="text-sm font-semibold text-violet-100">Resultado da visita</h4>
                 <div className="mt-3">
@@ -2000,7 +1998,7 @@ function LeadViewDialog({
               </section>
             ) : null}
             <label className="mt-3 block text-xs text-muted-foreground">
-              {progressStage === "Visita realizada"
+              {!SIMPLIFIED_LEAD_FLOW && progressStage === "Visita realizada"
                 ? "Observação da visita *"
                 : progressStage === "Standby"
                   ? "Motivo do standby *"

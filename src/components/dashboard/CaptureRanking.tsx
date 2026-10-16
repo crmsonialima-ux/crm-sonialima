@@ -65,15 +65,15 @@ function scoreFor(soldFromDaily: boolean, classificationValue?: string | null) {
   if (soldFromDaily) return { points: 10, category: "Vendido" };
 
   // Para imóveis que ainda não possuem venda lançada, a classificação de
-  // Administrador determina 7, 5, 3 ou permanece pendente em zero.
-  if (!exclusivity) return { points: 0, category: "Aguardando resposta de Administrador" };
+  // Allyson determina 7, 5, 3 ou permanece pendente em zero.
+  if (!exclusivity) return { points: 0, category: "Aguardando resposta de Allyson" };
   if (exclusivity.includes("com exclusividade"))
     return { points: 7, category: "Com exclusividade" };
   if (exclusivity.includes("sem exclusividade"))
     return { points: 5, category: "Sem exclusividade" };
   if (exclusivity.includes("sem autorizacao"))
     return { points: 3, category: "Sem autorização de venda" };
-  return { points: 0, category: "Aguardando resposta de Administrador" };
+  return { points: 0, category: "Aguardando resposta de Allyson" };
 }
 
 function formatDate(value?: string) {

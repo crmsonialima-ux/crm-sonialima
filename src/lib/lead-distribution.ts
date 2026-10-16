@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 
 export type LeadType = "Venda" | "Aluguel";
-export const LEAD_TYPES: LeadType[] = ["Venda", "Aluguel"];
+export const LEAD_TYPES: LeadType[] = ["Venda"];
 export const LEAD_DISTRIBUTION_QUERY_KEY = ["lead-distribution"] as const;
 
 export type QueueBroker = {

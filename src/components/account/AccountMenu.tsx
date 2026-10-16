@@ -24,9 +24,9 @@ type View = "profile" | "edit" | "password" | "preferences" | "theme" | "logout"
 type Profile = { name: string; email: string; role: string };
 const key = "sonialima:profile";
 const initial: Profile = {
-  name: "Diretoria",
+  name: "Allyson",
   email: "crmsoniaallyson@gmail.com",
-  role: "Administradora",
+  role: "Allyson",
 };
 
 export function AccountMenu() {

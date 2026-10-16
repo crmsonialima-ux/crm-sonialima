@@ -235,7 +235,7 @@ export function AgendaManager({
         <h1 className="mt-2 text-3xl font-semibold">Agenda</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Todos veem compromissos e observações. Demandas NEO e Caesb seguem a esteira Derley →
-          Vitor → admin.
+          Vitor → Allyson.
         </p>
       </section>
       {error && (

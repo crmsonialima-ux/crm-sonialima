@@ -16,7 +16,7 @@ export function isRestrictedAdmin(profile?: ProfileLike | null) {
 }
 
 export function hasFullAdminAccess(profile?: ProfileLike | null) {
-  return profile?.role === "admin" && !isRestrictedAdmin(profile);
+  return isAdministradorAdmin(profile);
 }
 
 export function isAdministradorAdmin(profile?: ProfileLike | null) {

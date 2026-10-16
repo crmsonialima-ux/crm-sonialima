@@ -66,8 +66,8 @@ export function LeadDistributionPanel() {
 
   return (
     <Panel
-      title="Próximos leads da fila"
-      subtitle="Distribuição automática contínua por finalidade"
+      title="Distribuição de leads"
+      subtitle="Fila única de vendas e controle de corretores"
       className="mb-8"
     >
       {error ? (
@@ -156,7 +156,7 @@ export function LeadDistributionPanel() {
                 Participação na fila
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Controle exclusivo do Administrador. Desativar retira o corretor das filas de venda e aluguel.
+                Controle exclusivo do Allyson. Desativar impede o corretor de receber novos leads.
               </p>
             </div>
           </div>
@@ -211,8 +211,8 @@ function blockPresentation(
   if (item.manuallyDisabled || reason.includes("desativado manualmente")) {
     if (!canSeeManualReason) return { status: "Indisponível para receber leads" };
     return {
-      status: "Prazo indeterminado até ser reativado pelo Administrador",
-      detail: "Desativado manualmente da fila pelo Administrador",
+      status: "Aguardando reativação pelo Allyson",
+      detail: "Desativado manualmente pelo Allyson",
     };
   }
   if (reason.includes("indisponivel") || reason.includes("indisponível")) {

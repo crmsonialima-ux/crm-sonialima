@@ -266,7 +266,7 @@ function LoginPage() {
           </p>
 
           <p className="mt-8 break-words px-2 text-center text-[11px] text-muted-foreground">
-            © {new Date().getFullYear()} Sônia Lima · Desenvolvido pelo Administrador
+            © {new Date().getFullYear()} Sônia Lima · Desenvolvido por Allyson
           </p>
         </div>
       </div>

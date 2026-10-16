@@ -26,7 +26,7 @@ function LeadsPage() {
   const canManageAllLeads = isAdministradorAdmin(access.profile);
   const canDeleteLeads = isAdministradorAdmin(access.profile);
   const canTransferLeads = isAdministradorAdmin(access.profile);
-  const canAddLeadObservation = Boolean(access.profile) && !accessCrm;
+  const canAddLeadObservation = isAdministradorAdmin(access.profile);
   return (
     <div className="crm-shell min-h-dvh">
       <Sidebar />
@@ -49,8 +49,8 @@ function LeadsPage() {
           deleting={access.deleting}
           onUpdateLeadProgress={canUpdateLeadStage ? access.updateLeadProgress : undefined}
           updatingProgress={access.updatingProgress}
-          onExtendAttendance={canUpdateLeadStage ? access.extendAttendance : undefined}
-          extendingAttendance={access.extendingAttendance}
+          onExtendAttendance={undefined}
+          extendingAttendance={false}
           onAddLeadObservation={canAddLeadObservation ? access.addLeadObservation : undefined}
           addingLeadObservation={access.addingLeadObservation}
           onEditLeadObservation={canManageAllLeads ? access.editLeadObservation : undefined}

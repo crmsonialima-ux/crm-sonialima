@@ -49,7 +49,7 @@ export function PropertyDocumentNotificationControl() {
         </span>
         <div>
           <h3 className="text-sm font-semibold text-foreground">
-            Controles operacionais do Administrador
+            Controles operacionais do Allyson
           </h3>
           <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
             Estas alterações são persistidas imediatamente no CRM e valem para toda a equipe.
@@ -60,7 +60,7 @@ export function PropertyDocumentNotificationControl() {
       <OperationalControl
         icon={BellRing}
         title="Notificações dos anexos dos imóveis"
-        description="Controla os três lembretes diários de documentos pendentes, enviados às 10:30, 13:30 e 16:00. Quando desativados, nenhum novo lembrete de imóvel será disparado até Administrador ativá-los novamente; os lembretes de propostas continuam normalmente."
+        description="Controla os três lembretes diários de documentos pendentes, enviados às 10:30, 13:30 e 16:00. Quando desativados, nenhum novo lembrete de imóvel será disparado até Allyson ativá-los novamente; os lembretes de propostas continuam normalmente."
         enabled={settings.propertyDocumentNotificationsEnabled}
         enabledLabel="Notificações ativas"
         disabledLabel="Notificações desativadas"

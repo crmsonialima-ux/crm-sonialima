@@ -52,7 +52,7 @@ const preferencesKey = "sonialima:preferences";
 const defaultProfile: Profile = {
   name: "Diretoria",
   email: "crmsoniaallyson@gmail.com",
-  role: "Administradora",
+  role: "Allyson",
 };
 const defaultPreferences: Preferences = {
   compact: false,

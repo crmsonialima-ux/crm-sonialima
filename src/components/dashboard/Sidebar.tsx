@@ -41,15 +41,15 @@ type NavItem = {
 };
 
 const nav: NavItem[] = [
-  { to: "/", label: "Painel", icon: LayoutDashboard },
+  { to: "/", label: "Painel", icon: LayoutDashboard, allysonOnly: true },
   { to: "/leads", label: "Leads", icon: Users },
   { to: "/agenda", label: "Agenda", icon: CalendarDays },
-  { to: "/financiamento", label: "Financiamento", icon: Landmark },
-  { to: "/vendas", label: "Relatório de vendas", icon: BadgeDollarSign },
+  { to: "/financiamento", label: "Financiamento", icon: Landmark, allysonOnly: true },
+  { to: "/vendas", label: "Relatório de vendas", icon: BadgeDollarSign, allysonOnly: true },
   { to: "/corretores", label: "Corretores", icon: UserCog, adminOnly: true },
   { to: "/imoveis", label: "Imóveis", icon: Building2 },
   { to: "/marketing", label: "Divulga\u00e7\u00e3o", icon: Megaphone, adminOnly: true },
-  { to: "/configuracoes", label: "Configurações", icon: Settings },
+  { to: "/configuracoes", label: "Configurações", icon: Settings, allysonOnly: true },
   { to: "/validacao", label: "Validação", icon: ShieldCheck, validatorOnly: true },
 ];
 
@@ -84,8 +84,10 @@ function Navigation({
 }) {
   const loc = useLocation();
   const { profile } = useAuth();
+  const isAllyson = isAdministradorAdmin(profile);
   const items = nav.filter(
     (item) =>
+      (isAllyson || ["/leads", "/agenda", "/imoveis"].includes(item.to)) &&
       (!item.adminOnly || profile?.role === "admin") &&
       (!item.allysonOnly || isAdministradorAdmin(profile)) &&
       (!item.validatorOnly || profile?.isValidator),

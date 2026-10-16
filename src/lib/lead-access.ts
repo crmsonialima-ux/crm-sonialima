@@ -472,7 +472,7 @@ async function getAgendaProfiles() {
         fullName: isSoniaLimaAgenda
           ? "Sônia Lima"
           : isAdministrador
-            ? "crmadministrador"
+            ? "Allyson"
             : profile.full_name || profile.email,
         email: profile.email,
         role: profile.role as CrmRole,
@@ -848,7 +848,7 @@ export function useLeadAccess(userId?: string) {
         );
       }
       const activityNote = [note?.trim(), ...qualificationNotes].filter(Boolean).join("\n");
-      const leadUpdate = {
+      const fullLeadUpdate = {
         stage,
         ...(stage !== "Em atendimento" ? { assignment_deadline_at: null } : {}),
         visit_scheduled_at: hasNewVisitSchedule
@@ -903,6 +903,9 @@ export function useLeadAccess(userId?: string) {
             }
           : {}),
       };
+      // No fluxo simplificado, o corretor só persiste a etapa. Os demais dados
+      // continuam sob gestão exclusiva do Administrador.
+      const leadUpdate = isAdministradorAdmin(profile.data) ? fullLeadUpdate : { stage };
       let usedLegacyVisitExecutorSchema = false;
       let error: { message: string } | null = null;
       if (isVisitReschedule) {

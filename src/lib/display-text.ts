@@ -102,7 +102,7 @@ export function displayText(value?: string | null) {
     insert: "Inclus\u00e3o",
     update: "Altera\u00e7\u00e3o",
     delete: "Exclus\u00e3o",
-    admin: "Administrador",
+    admin: "Allyson",
     broker: "Corretor",
     unknown: "N\u00e3o identificado",
     before: "Antes",

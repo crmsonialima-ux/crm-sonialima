@@ -3,6 +3,7 @@ import { Navigate, useLocation } from "@tanstack/react-router";
 import { Fingerprint, Loader2, LockKeyhole } from "lucide-react";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { supabase } from "@/lib/supabase";
+import { isAdministradorAdmin } from "@/lib/admin-access";
 import type { Theme } from "@/hooks/use-theme";
 import {
   installCrmClientErrorCapture,
@@ -183,13 +184,13 @@ function RoleGate({
   loading: boolean;
 }) {
   const location = useLocation();
-  const brokerRoutes = ["/", "/leads", "/imoveis", "/agenda", "/financiamento", "/vendas", "/configuracoes"];
+  const brokerRoutes = ["/leads", "/imoveis", "/agenda"];
   if (loading) return <div className="min-h-dvh bg-background" />;
   if (location.pathname === "/validacao" && !profile?.isValidator)
     return <Navigate to="/" replace />;
   if (location.pathname === "/laboratorio" && profile?.role !== "admin" && !profile?.isValidator)
     return <Navigate to="/leads" replace />;
-  if (profile?.role !== "admin" && !brokerRoutes.includes(location.pathname))
+  if (!isAdministradorAdmin(profile) && !brokerRoutes.includes(location.pathname))
     return <Navigate to="/leads" replace />;
   return <>{children}</>;
 }
