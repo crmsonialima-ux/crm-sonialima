@@ -589,8 +589,18 @@ export function PropertyCreateDialog({
       const isNewSubmission = !propertyId;
 
       if (isNewSubmission) {
-        propertyId = (await findMatchingPropertyId(input)) ?? createPropertyExternalId();
-        await saveProperty(input, propertyId);
+        const matchingPropertyId = await findMatchingPropertyId(input);
+        if (matchingPropertyId) {
+          // Um código de portal já existente representa o mesmo imóvel: atualiza-o.
+          propertyId = matchingPropertyId;
+          await saveProperty(input, propertyId);
+        } else {
+          // Sem imóvel correspondente, a operação deve ser INSERT. Passar um
+          // código recém-gerado como `id` faria saveProperty tentar UPDATE e
+          // retornaria o erro de coerção de objeto único do PostgREST.
+          const savedProperty = await saveProperty(input);
+          propertyId = savedProperty.id;
+        }
         setCreatedPropertyId(propertyId);
       }
 
