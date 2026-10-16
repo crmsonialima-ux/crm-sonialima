@@ -80,7 +80,7 @@ export function LeadDistributionPanel() {
                 !item.isBlocked,
             );
             const next = queue[0];
-            const upcoming = queue.slice(0, 3).map((item) => displayBrokerName(item.fullName));
+            const upcoming = queue.map((item) => displayBrokerName(item.fullName));
 
             return (
               <div key={leadType} className="rounded-xl border border-white/8 bg-white/[0.02] p-4">
