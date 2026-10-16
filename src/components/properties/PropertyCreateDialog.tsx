@@ -17,7 +17,6 @@ import {
   submitPropertyAuthorizationPhase1,
   createPropertyExternalId,
   setSoniaLimaPropertyExclusivity,
-  setPropertyCaptureRankingEnabled,
   type Property,
   type PropertyInput,
   type PropertyAuthorizationInput,
@@ -172,9 +171,6 @@ export function PropertyCreateDialog({
   const [sonialimaExclusivity, setSoniaLimaExclusivity] = useState<
     "COM EXCLUSIVIDADE" | "SEM EXCLUSIVIDADE" | "SEM AUTORIZACAO DE VENDA" | undefined
   >(property?.sonialimaExclusivityControl);
-  const [captureRankingEnabled, setCaptureRankingEnabled] = useState(
-    Boolean(property?.captureRankingEnabled),
-  );
   const [originalDocumentFiles, setOriginalDocumentFiles] = useState<File[]>([]);
   const [originalDocumentsList, setOriginalDocumentsList] = useState<
     { name: string; url: string }[]
@@ -264,7 +260,6 @@ export function PropertyCreateDialog({
       );
       setSelectedCapturers([firstCapturerId, secondCapturerId]);
       setPortalReferences(initialPortalReferences(property));
-      setCaptureRankingEnabled(Boolean(property?.captureRankingEnabled));
       setError("");
       setRestoredFromDraft(false);
       // A ficha de captação foi removida: mantenha o formulário administrativo
@@ -1019,49 +1014,6 @@ export function PropertyCreateDialog({
                         Sem autorização
                       </button>
                     </div>
-                    {editing && property?.id && (
-                      <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.02] p-3">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <div>
-                            <p className="text-sm font-medium">Pontuação no ranking de captação</p>
-                            <p className="mt-0.5 text-xs text-muted-foreground">
-                              {captureRankingEnabled
-                                ? "Ligado: a classificação de exclusividade deste imóvel vale pontos."
-                                : "Desligado: este imóvel não soma pontos de exclusividade."}
-                            </p>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className={
-                              captureRankingEnabled
-                                ? "border-copper/50 bg-copper/10 text-copper hover:bg-copper/15 hover:text-copper"
-                                : "text-muted-foreground"
-                            }
-                            disabled={saving}
-                            onClick={async () => {
-                              try {
-                                setSaving(true);
-                                const next = !captureRankingEnabled;
-                                await setPropertyCaptureRankingEnabled(property.id, next);
-                                setCaptureRankingEnabled(next);
-                                onCreated();
-                              } catch (reason) {
-                                setError(
-                                  reason instanceof Error
-                                    ? reason.message
-                                    : "Erro ao alterar a pontuação de captação.",
-                                );
-                              } finally {
-                                setSaving(false);
-                              }
-                            }}
-                          >
-                            {captureRankingEnabled ? "Desligar pontos" : "Ligar pontos"}
-                          </Button>
-                        </div>
-                      </div>
-                    )}
                     {isSoniaLimaAccount &&
                       editing &&
                       property?.id &&
