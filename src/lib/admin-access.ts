@@ -26,6 +26,13 @@ export function isAdministradorAdmin(profile?: ProfileLike | null) {
   );
 }
 
+export function canViewExecutiveDashboard(profile?: ProfileLike | null) {
+  return (
+    isAdministradorAdmin(profile) ||
+    profile?.email?.trim().toLocaleLowerCase("pt-BR") === "crmsonia@gmail.com"
+  );
+}
+
 export function isVitorProfile(profile?: ProfileLike | null) {
   return profile?.email?.trim().toLocaleLowerCase("pt-BR") === VITOR_EMAIL;
 }

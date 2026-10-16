@@ -28,7 +28,7 @@ const labels = {
 const agendaModalStorageKey = "sonialima:agenda-open-modal";
 
 function agendaPersonName(person?: { full_name?: string | null; email?: string | null }) {
-  if (person?.email?.trim().toLowerCase() === "crmsoniaallyson@gmail.com") return "Allyson";
+  if (person?.email?.trim().toLowerCase() === "crmsoniaallyson@gmail.com") return "crmallyson";
   return person?.full_name || person?.email || "Não identificado";
 }
 

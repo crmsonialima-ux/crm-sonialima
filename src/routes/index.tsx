@@ -31,7 +31,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { isAdministradorAdmin } from "@/lib/admin-access";
+import { canViewExecutiveDashboard, isAdministradorAdmin } from "@/lib/admin-access";
 
 function getBrasiliaGreeting() {
   const hour = Number(
@@ -70,7 +70,11 @@ export const Route = createFileRoute("/")({
 function Dashboard() {
   const { data, isLoading, notConfigured, unavailable } = useDashboardData();
   const { profile, session } = useAuth();
-  const isAdmin = profile?.role === "admin";
+  const isAdmin = canViewExecutiveDashboard({
+    id: profile?.id ?? session?.user.id,
+    role: profile?.role,
+    email: profile?.email ?? session?.user.email,
+  });
   const isBroker = profile?.role === "broker";
   const allysonAdmin = isAdministradorAdmin({
     id: profile?.id ?? session?.user.id,

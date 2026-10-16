@@ -41,7 +41,7 @@ type NavItem = {
 };
 
 const nav: NavItem[] = [
-  { to: "/", label: "Painel", icon: LayoutDashboard, allysonOnly: true },
+  { to: "/", label: "Painel", icon: LayoutDashboard },
   { to: "/leads", label: "Leads", icon: Users },
   { to: "/agenda", label: "Agenda", icon: CalendarDays },
   { to: "/financiamento", label: "Financiamento", icon: Landmark, allysonOnly: true },
@@ -87,7 +87,7 @@ function Navigation({
   const isAllyson = isAdministradorAdmin(profile);
   const items = nav.filter(
     (item) =>
-      (isAllyson || ["/leads", "/agenda", "/imoveis"].includes(item.to)) &&
+      (isAllyson || ["/", "/leads", "/agenda", "/imoveis"].includes(item.to)) &&
       (!item.adminOnly || profile?.role === "admin") &&
       (!item.allysonOnly || isAdministradorAdmin(profile)) &&
       (!item.validatorOnly || profile?.isValidator),

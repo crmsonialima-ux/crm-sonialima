@@ -386,7 +386,7 @@ export function PropertiesManager({
             Imóveis referenciados nas oportunidades recebidas pela API.
           </p>
         </div>
-        {!restrictedAdmin && (
+        {allysonAdmin && (
           <PropertyCreateDialog
             isAdmin={allysonAdmin}
             brokerName={profile?.fullName}

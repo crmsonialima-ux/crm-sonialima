@@ -472,7 +472,7 @@ async function getAgendaProfiles() {
         fullName: isSoniaLimaAgenda
           ? "Sônia Lima"
           : isAdministrador
-            ? "Allyson"
+            ? "crmallyson"
             : profile.full_name || profile.email,
         email: profile.email,
         role: profile.role as CrmRole,
