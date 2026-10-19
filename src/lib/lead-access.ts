@@ -481,7 +481,16 @@ export function useBrokerProfiles(enabled = true) {
 async function getAgendaProfiles() {
   const { data, error } = await supabase.rpc("list_agenda_profiles");
   if (error) throw new Error(error.message);
-  return ((data ?? []) as AgendaProfileRecord[])
+  const agendaProfiles = ((data ?? []) as AgendaProfileRecord[]).filter(
+    (profile) => profile.id !== ADMINISTRATOR_ADMIN_ID,
+  );
+  agendaProfiles.push({
+    id: ADMINISTRATOR_ADMIN_ID,
+    full_name: "crmallyson",
+    email: "crmsoniaallyson@gmail.com",
+    role: "admin",
+  });
+  return agendaProfiles
     .map((profile) => {
       const normalizedEmail = profile.email.trim().toLowerCase();
       const isAdministrador = normalizedEmail === "crmsoniaallyson@gmail.com";
