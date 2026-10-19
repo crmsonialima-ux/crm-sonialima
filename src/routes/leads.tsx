@@ -22,7 +22,8 @@ function LeadsPage() {
   const accessCrm = isRestrictedAdmin(access.profile);
   const canEditLeadData = isAdministradorAdmin(access.profile);
   const canUpdateLeadStage = Boolean(access.profile) && !accessCrm;
-  const canCreateLead = Boolean(access.profile) && !accessCrm;
+  // Somente Allyson pode cadastrar/lancar novos leads.
+  const canCreateLead = isAdministradorAdmin(access.profile);
   const canManageAllLeads = isAdministradorAdmin(access.profile);
   const canDeleteLeads = isAdministradorAdmin(access.profile);
   const canTransferLeads = isAdministradorAdmin(access.profile);

@@ -2,7 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { LEAD_DISTRIBUTION_QUERY_KEY, type LeadType } from "@/lib/lead-distribution";
 import { canonicalLeadOrigin } from "@/lib/lead-origin";
-import { isAdministradorAdmin, isVitorProfile } from "@/lib/admin-access";
+import {
+  ADMINISTRATOR_ADMIN_ID,
+  isAdministradorAdmin,
+  isVitorProfile,
+} from "@/lib/admin-access";
 import { supabase } from "@/lib/supabase";
 import { displayText } from "@/lib/display-text";
 
@@ -445,9 +449,24 @@ export async function getBrokers() {
       ],
     ),
   );
-  return [...profilesById.values()].sort((left, right) =>
-    left.fullName.localeCompare(right.fullName, "pt-BR"),
-  ) satisfies AccessProfile[];
+  // Allyson também pode ser selecionado como responsável ao cadastrar um lead,
+  // embora seja o único usuário autorizado a efetuar esse cadastro.
+  profilesById.set(ADMINISTRATOR_ADMIN_ID, {
+    id: ADMINISTRATOR_ADMIN_ID,
+    fullName: "crmallyson",
+    email: "crmsoniaallyson@gmail.com",
+    role: "admin",
+  });
+  const rosterOrder = ["crmdanilo", "crmnoemia", "crmsonia", "crmallyson"];
+  return [...profilesById.values()].sort((left, right) => {
+    const leftPosition = rosterOrder.indexOf(left.fullName.trim().toLowerCase());
+    const rightPosition = rosterOrder.indexOf(right.fullName.trim().toLowerCase());
+    if (leftPosition !== -1 || rightPosition !== -1) {
+      return (leftPosition === -1 ? Number.MAX_SAFE_INTEGER : leftPosition) -
+        (rightPosition === -1 ? Number.MAX_SAFE_INTEGER : rightPosition);
+    }
+    return left.fullName.localeCompare(right.fullName, "pt-BR");
+  }) satisfies AccessProfile[];
 }
 
 export function useBrokerProfiles(enabled = true) {
