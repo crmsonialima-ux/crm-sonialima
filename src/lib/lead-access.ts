@@ -2,11 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { LEAD_DISTRIBUTION_QUERY_KEY, type LeadType } from "@/lib/lead-distribution";
 import { canonicalLeadOrigin } from "@/lib/lead-origin";
-import {
-  ADMINISTRATOR_ADMIN_ID,
-  isAdministradorAdmin,
-  isVitorProfile,
-} from "@/lib/admin-access";
+import { isAdministradorAdmin, isVitorProfile } from "@/lib/admin-access";
 import { supabase } from "@/lib/supabase";
 import { displayText } from "@/lib/display-text";
 
@@ -437,7 +433,14 @@ export async function getBrokers() {
   const brokerProfiles = (data ?? []) as AgendaProfileRecord[];
   const agendaProfiles = (agendaProfilesResult.data ?? []) as AgendaProfileRecord[];
   const profilesById = new Map<string, AccessProfile>(
-    [...brokerProfiles, ...agendaProfiles.filter((item) => item.role === "broker")].map(
+    [
+      ...brokerProfiles,
+      ...agendaProfiles.filter(
+        (item) =>
+          item.role === "broker" ||
+          item.email.trim().toLocaleLowerCase("pt-BR") === "crmsoniaallyson@gmail.com",
+      ),
+    ].map(
       (profile) => [
         profile.id,
         {
@@ -451,12 +454,6 @@ export async function getBrokers() {
   );
   // Allyson também pode ser selecionado como responsável ao cadastrar um lead,
   // embora seja o único usuário autorizado a efetuar esse cadastro.
-  profilesById.set(ADMINISTRATOR_ADMIN_ID, {
-    id: ADMINISTRATOR_ADMIN_ID,
-    fullName: "crmallyson",
-    email: "crmsoniaallyson@gmail.com",
-    role: "admin",
-  });
   const rosterOrder = ["crmdanilo", "crmnoemia", "crmsonia", "crmallyson"];
   return [...profilesById.values()].sort((left, right) => {
     const leftPosition = rosterOrder.indexOf(left.fullName.trim().toLowerCase());
@@ -481,16 +478,7 @@ export function useBrokerProfiles(enabled = true) {
 async function getAgendaProfiles() {
   const { data, error } = await supabase.rpc("list_agenda_profiles");
   if (error) throw new Error(error.message);
-  const agendaProfiles = ((data ?? []) as AgendaProfileRecord[]).filter(
-    (profile) => profile.id !== ADMINISTRATOR_ADMIN_ID,
-  );
-  agendaProfiles.push({
-    id: ADMINISTRATOR_ADMIN_ID,
-    full_name: "crmallyson",
-    email: "crmsoniaallyson@gmail.com",
-    role: "admin",
-  });
-  return agendaProfiles
+  return ((data ?? []) as AgendaProfileRecord[])
     .map((profile) => {
       const normalizedEmail = profile.email.trim().toLowerCase();
       const isAdministrador = normalizedEmail === "crmsoniaallyson@gmail.com";
